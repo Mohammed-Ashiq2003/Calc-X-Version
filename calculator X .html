@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CALCX — Premium Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+[data-theme="dark"] {
+  --bg-from: #0a0a1a;
+  --bg-mid:  #0f0f2e;
+  --bg-to:   #1a0a2e;
+  --orb1: rgba(99,102,241,0.35);
+  --orb2: rgba(168,85,247,0.25);
+  --orb3: rgba(236,72,153,0.18);
+  --glass-bg: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.1);
+  --glass-shadow: rgba(0,0,0,0.5);
+  --display-bg: rgba(0,0,0,0.3);
+  --display-border: rgba(255,255,255,0.08);
+  --text-primary: #f1f1ff;
+  --text-expr: rgba(255,255,255,0.5);
+  --text-secondary: rgba(255,255,255,0.4);
+  --btn-num-bg: rgba(255,255,255,0.06);
+  --btn-num-hover: rgba(255,255,255,0.12);
+  --btn-num-border: rgba(255,255,255,0.08);
+  --btn-op-bg: rgba(99,102,241,0.18);
+  --btn-op-hover: rgba(99,102,241,0.32);
+  --btn-op-border: rgba(99,102,241,0.3);
+  --btn-op-text: #a5b4fc;
+  --btn-fn-bg: rgba(168,85,247,0.15);
+  --btn-fn-hover: rgba(168,85,247,0.28);
+  --btn-fn-border: rgba(168,85,247,0.25);
+  --btn-fn-text: #d8b4fe;
+  --btn-del-bg: rgba(239,68,68,0.12);
+  --btn-del-hover: rgba(239,68,68,0.24);
+  --btn-del-border: rgba(239,68,68,0.2);
+  --btn-del-text: #fca5a5;
+  --eq-from: #6366f1;
+  --eq-to: #a855f7;
+  --eq-shadow: rgba(99,102,241,0.5);
+  --hist-bg: rgba(255,255,255,0.03);
+  --hist-border: rgba(255,255,255,0.07);
+  --hist-item: rgba(255,255,255,0.05);
+  --hist-text: rgba(255,255,255,0.5);
+  --toggle-bg: rgba(255,255,255,0.08);
+  --badge-bg: rgba(99,102,241,0.2);
+  --badge-text: #a5b4fc;
+  --scrollbar: rgba(99,102,241,0.3);
+}
+
+[data-theme="light"] {
+  --bg-from: #e8eaf8;
+  --bg-mid:  #f0e8f8;
+  --bg-to:   #fce8f4;
+  --orb1: rgba(99,102,241,0.2);
+  --orb2: rgba(168,85,247,0.15);
+  --orb3: rgba(236,72,153,0.12);
+  --glass-bg: rgba(255,255,255,0.55);
+  --glass-border: rgba(255,255,255,0.85);
+  --glass-shadow: rgba(99,102,241,0.12);
+  --display-bg: rgba(255,255,255,0.5);
+  --display-border: rgba(99,102,241,0.15);
+  --text-primary: #1a1a3e;
+  --text-expr: rgba(26,26,62,0.45);
+  --text-secondary: rgba(26,26,62,0.4);
+  --btn-num-bg: rgba(255,255,255,0.7);
+  --btn-num-hover: rgba(255,255,255,0.95);
+  --btn-num-border: rgba(99,102,241,0.12);
+  --btn-op-bg: rgba(99,102,241,0.1);
+  --btn-op-hover: rgba(99,102,241,0.2);
+  --btn-op-border: rgba(99,102,241,0.25);
+  --btn-op-text: #4f46e5;
+  --btn-fn-bg: rgba(168,85,247,0.1);
+  --btn-fn-hover: rgba(168,85,247,0.2);
+  --btn-fn-border: rgba(168,85,247,0.2);
+  --btn-fn-text: #7c3aed;
+  --btn-del-bg: rgba(239,68,68,0.08);
+  --btn-del-hover: rgba(239,68,68,0.16);
+  --btn-del-border: rgba(239,68,68,0.18);
+  --btn-del-text: #dc2626;
+  --eq-from: #6366f1;
+  --eq-to: #a855f7;
+  --eq-shadow: rgba(99,102,241,0.35);
+  --hist-bg: rgba(255,255,255,0.45);
+  --hist-border: rgba(99,102,241,0.1);
+  --hist-item: rgba(255,255,255,0.6);
+  --hist-text: rgba(26,26,62,0.5);
+  --toggle-bg: rgba(99,102,241,0.1);
+  --badge-bg: rgba(99,102,241,0.12);
+  --badge-text: #4f46e5;
+  --scrollbar: rgba(99,102,241,0.25);
+}
+
+html, body { height: 100%; font-family: 'Outfit', sans-serif; }
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bg-from) 0%, var(--bg-mid) 50%, var(--bg-to) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: background 0.5s ease;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  transition: background 0.5s;
+}
+.orb1 { width: 500px; height: 500px; background: var(--orb1); top: -100px; left: -100px; animation: drift1 12s ease-in-out infinite alternate; }
+.orb2 { width: 400px; height: 400px; background: var(--orb2); bottom: -80px; right: -80px; animation: drift2 15s ease-in-out infinite alternate; }
+.orb3 { width: 300px; height: 300px; background: var(--orb3); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: drift3 10s ease-in-out infinite alternate; }
+
+@keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(60px,40px); } }
+@keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-40px,-60px); } }
+@keyframes drift3 { from { transform: translate(-50%,-50%) scale(1); } to { transform: translate(-50%,-50%) scale(1.3); } }
+
+.app {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 760px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── CALC CARD ── */
+.calc-card {
+  flex: 1;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: 28px;
+  padding: 24px 20px 20px;
+  box-shadow: 0 20px 60px var(--glass-shadow), inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: background 0.4s, border 0.4s, box-shadow 0.4s;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.brand { display: flex; align-items: center; gap: 8px; }
+
+.brand-logo {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--eq-from), var(--eq-to));
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  box-shadow: 0 4px 12px var(--eq-shadow);
+}
+
+.brand-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+}
+
+.badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.toggle-btn {
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  background: var(--toggle-bg);
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  transition: all 0.25s;
+  color: var(--text-primary);
+}
+.toggle-btn:hover { transform: rotate(25deg) scale(1.1); }
+
+/* ── DISPLAY ── */
+.display {
+  background: var(--display-bg);
+  border: 1px solid var(--display-border);
+  border-radius: 18px;
+  padding: 18px 20px 14px;
+  margin-bottom: 18px;
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 5px;
+  overflow: hidden;
+  position: relative;
+  transition: background 0.4s, border 0.4s;
+}
+
+.display-shimmer {
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.035), transparent);
+  animation: shimmer 5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes shimmer { 0%,100% { left: -60%; } 60% { left: 160%; } }
+
+.expr-line {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-expr);
+  min-height: 16px;
+  text-align: right;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.4s;
+}
+
+.result-line {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: right;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  transition: color 0.3s, font-size 0.12s;
+}
+.result-line.md { font-size: 34px; letter-spacing: -0.5px; }
+.result-line.sm { font-size: 26px; letter-spacing: 0; }
+.result-line.xs { font-size: 20px; }
+
+@keyframes pop { 0% { transform: scale(0.95); } 55% { transform: scale(1.03); } 100% { transform: scale(1); } }
+.pop { animation: pop 0.22s ease; }
+
+/* ── GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(5, 62px);
+  gap: 10px;
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 15px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.15s, box-shadow 0.15s, filter 0.15s;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background 0.12s;
+  border-radius: inherit;
+  pointer-events: none;
+}
+button:active { transform: scale(0.91) !important; }
+button:active::before { background: rgba(255,255,255,0.07); }
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  background: rgba(255,255,255,0.2);
+  animation: ripple-anim 0.55s linear;
+  pointer-events: none;
+}
+@keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+.btn-num {
+  background: var(--btn-num-bg);
+  color: var(--text-primary);
+  border-color: var(--btn-num-border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.btn-num:hover { background: var(--btn-num-hover); transform: translateY(-1px); box-shadow: 0 5px 14px rgba(0,0,0,0.1); }
+
+.btn-op {
+  background: var(--btn-op-bg);
+  color: var(--btn-op-text);
+  border-color: var(--btn-op-border);
+  font-size: 20px;
+}
+.btn-op:hover { background: var(--btn-op-hover); transform: translateY(-1px); }
+
+.btn-fn {
+  background: var(--btn-fn-bg);
+  color: var(--btn-fn-text);
+  border-color: var(--btn-fn-border);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.btn-fn:hover { background: var(--btn-fn-hover); transform: translateY(-1px); }
+
+.btn-del {
+  background: var(--btn-del-bg);
+  color: var(--btn-del-text);
+  border-color: var(--btn-del-border);
+  font-size: 19px;
+}
+.btn-del:hover { background: var(--btn-del-hover); transform: translateY(-1px); }
+
+.btn-eq {
+  background: linear-gradient(145deg, var(--eq-from), var(--eq-to));
+  color: white;
+  border-color: transparent;
+  font-size: 26px;
+  box-shadow: 0 6px 22px var(--eq-shadow);
+  grid-column: 4;
+  grid-row: 4 / 6;
+}
+.btn-eq:hover { filter: brightness(1.15); transform: translateY(-2px) !important; box-shadow: 0 12px 30px var(--eq-shadow); }
+
+.btn-zero {
+  grid-column: 1 / 3;
+  text-align: left;
+  padding-left: 24px;
+}
+
+/* ── HISTORY ── */
+.hist-panel {
+  width: 220px;
+  background: var(--hist-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--hist-border);
+  border-radius: 24px;
+  padding: 18px 14px;
+  box-shadow: 0 20px 60px var(--glass-shadow);
+  transition: background 0.4s, border 0.4s;
+  max-height: 540px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.hist-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+}
+
+.hist-clear-btn {
+  font-size: 10px;
+  color: var(--btn-del-text);
+  cursor: pointer;
+  font-weight: 600;
+  background: none;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  padding: 3px 8px;
+  border-radius: 6px;
+  height: auto;
+  opacity: 0.7;
+  transition: opacity 0.2s, background 0.15s;
+  letter-spacing: 0.02em;
+}
+.hist-clear-btn:hover { opacity: 1; background: var(--btn-del-bg); transform: none !important; }
+
+.hist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 2px;
+}
+.hist-list::-webkit-scrollbar { width: 3px; }
+.hist-list::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 4px; }
+
+.hist-item {
+  background: var(--hist-item);
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  animation: slideIn 0.25s ease;
+}
+.hist-item:hover { border-color: var(--btn-op-border); transform: translateX(3px); }
+
+@keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+
+.hist-expr {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--hist-text);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hist-result {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hist-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 12px;
+  padding: 32px 0;
+  line-height: 2;
+  letter-spacing: 0.02em;
+}
+
+.kbd-hint {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 14px;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 660px) {
+  .app { flex-direction: column; align-items: stretch; }
+  .hist-panel { width: 100%; max-height: 190px; }
+  .result-line { font-size: 36px; }
+  .grid { grid-template-rows: repeat(5, 56px); }
+  .btn-eq { grid-row: 4 / 6; }
+}
+@media (max-width: 380px) {
+  .calc-card { padding: 16px 12px; }
+  .grid { gap: 8px; grid-template-rows: repeat(5, 52px); }
+  button { border-radius: 12px; font-size: 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="app">
+  <!-- Calculator -->
+  <div class="calc-card">
+    <div class="header">
+      <div class="brand">
+        <div class="brand-logo">Cx</div>
+        <span class="brand-name">CALCX</span>
+        <span class="badge">PRO</span>
+      </div>
+      <button class="toggle-btn" id="themeToggle" title="Toggle theme" onclick="toggleTheme()">🌙</button>
+    </div>
+
+    <div class="display">
+      <div class="display-shimmer"></div>
+      <div class="expr-line" id="exprLine"></div>
+      <div class="result-line" id="resultLine">0</div>
+    </div>
+
+    <div class="grid">
+      <button class="btn-fn" onclick="handleAC()">AC</button>
+      <button class="btn-fn" onclick="toggleSign()">+/−</button>
+      <button class="btn-fn" onclick="handlePercent()">%</button>
+      <button class="btn-op" onclick="handleOp('/')">÷</button>
+
+      <button class="btn-num" onclick="handleNum('7')">7</button>
+      <button class="btn-num" onclick="handleNum('8')">8</button>
+      <button class="btn-num" onclick="handleNum('9')">9</button>
+      <button class="btn-op" onclick="handleOp('*')">×</button>
+
+      <button class="btn-num" onclick="handleNum('4')">4</button>
+      <button class="btn-num" onclick="handleNum('5')">5</button>
+      <button class="btn-num" onclick="handleNum('6')">6</button>
+      <button class="btn-op" onclick="handleOp('-')">−</button>
+
+      <button class="btn-num" onclick="handleNum('1')">1</button>
+      <button class="btn-num" onclick="handleNum('2')">2</button>
+      <button class="btn-num" onclick="handleNum('3')">3</button>
+      <button class="btn-op" onclick="handleOp('+')">+</button>
+
+      <button class="btn-num btn-zero" onclick="handleNum('0')">0</button>
+      <button class="btn-num" onclick="handleDot()">.</button>
+      <button class="btn-del" onclick="handleDel()">⌫</button>
+      <button class="btn-eq" onclick="handleEqual()">=</button>
+    </div>
+
+    <div class="kbd-hint">⌨ Keyboard supported &nbsp;·&nbsp; ESC to clear</div>
+  </div>
+
+  <!-- History -->
+  <div class="hist-panel">
+    <div class="hist-header">
+      <span class="hist-title">History</span>
+      <button class="hist-clear-btn" onclick="clearHistory()">Clear all</button>
+    </div>
+    <div class="hist-list" id="histList">
+      <div class="hist-empty" id="histEmpty">No calculations yet.<br/>Start computing ✦</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let current  = '0';
+let previous = '';
+let operator = null;
+let waitOp   = false;
+let freshRes = false;
+let history  = JSON.parse(localStorage.getItem('calcx_hist') || '[]');
+let isDark   = true;
+
+const resultEl = document.getElementById('resultLine');
+const exprEl   = document.getElementById('exprLine');
+
+function updateDisplay(anim = false) {
+  resultEl.textContent = current;
+  const l = current.replace(/[-.]/, '').length;
+  resultEl.className = 'result-line' + (l > 14 ? ' xs' : l > 10 ? ' sm' : l > 7 ? ' md' : '');
+  if (anim) { resultEl.classList.remove('pop'); void resultEl.offsetWidth; resultEl.classList.add('pop'); }
+}
+
+function handleNum(d) {
+  if (waitOp)   { current = d; waitOp = false; }
+  else if (freshRes) { current = d; freshRes = false; }
+  else { current = current === '0' ? d : current + d; }
+  if (current.length > 15) current = current.slice(0, 15);
+  updateDisplay();
+}
+
+function handleDot() {
+  if (waitOp) { current = '0.'; waitOp = false; updateDisplay(); return; }
+  if (!current.includes('.')) { current += '.'; updateDisplay(); }
+}
+
+const SYM = {'+':'+', '-':'−', '*':'×', '/':'÷'};
+
+function handleOp(op) {
+  if (operator && !waitOp) calcChain();
+  previous = current;
+  operator = op;
+  waitOp   = true;
+  freshRes = false;
+  exprEl.textContent = fmt(previous) + ' ' + SYM[op];
+}
+
+function compute(a, b, op) {
+  switch(op) {
+    case '+': return a + b;
+    case '-': return a - b;
+    case '*': return a * b;
+    case '/': return b === 0 ? null : a / b;
+  }
+}
+
+function calcChain() {
+  const res = compute(parseFloat(previous), parseFloat(current), operator);
+  current = res === null ? 'Error' : parseFloat(res.toFixed(10)).toString();
+  updateDisplay();
+}
+
+function handleEqual() {
+  if (!operator || waitOp) return;
+  const a = parseFloat(previous), b = parseFloat(current);
+  const exprStr = fmt(previous) + ' ' + SYM[operator] + ' ' + fmt(current);
+  const res = compute(a, b, operator);
+  exprEl.textContent = exprStr + ' =';
+  if (res === null) { current = 'Error'; }
+  else {
+    const resStr = parseFloat(res.toFixed(10)).toString();
+    addHistory(exprStr, resStr);
+    current = resStr;
+  }
+  operator = null; waitOp = false; freshRes = true;
+  updateDisplay(true);
+}
+
+function handleAC() {
+  current = '0'; previous = ''; operator = null; waitOp = false; freshRes = false;
+  exprEl.textContent = '';
+  updateDisplay(true);
+}
+
+function handleDel() {
+  if (freshRes || current === 'Error') { current = '0'; freshRes = false; }
+  else if (current.length > 1) current = current.slice(0, -1);
+  else current = '0';
+  updateDisplay();
+}
+
+function toggleSign() {
+  if (current !== '0' && current !== 'Error')
+    current = current.startsWith('-') ? current.slice(1) : '-' + current;
+  updateDisplay();
+}
+
+function handlePercent() {
+  if (current !== 'Error') { current = String(parseFloat(current) / 100); updateDisplay(); }
+}
+
+function fmt(n) {
+  const f = parseFloat(n);
+  return isNaN(f) ? n : parseFloat(f.toFixed(8)).toString();
+}
+
+// History
+function addHistory(expr, result) {
+  history.unshift({ expr, result });
+  if (history.length > 5) history.pop();
+  localStorage.setItem('calcx_hist', JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const list  = document.getElementById('histList');
+  const empty = document.getElementById('histEmpty');
+  list.querySelectorAll('.hist-item').forEach(e => e.remove());
+  if (history.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  history.forEach(h => {
+    const div = document.createElement('div');
+    div.className = 'hist-item';
+    div.innerHTML = `<div class="hist-expr">${h.expr}</div><div class="hist-result">${h.result}</div>`;
+    div.onclick = () => { current = h.result; freshRes = true; updateDisplay(true); };
+    list.appendChild(div);
+  });
+}
+
+function clearHistory() {
+  history = [];
+  localStorage.removeItem('calcx_hist');
+  renderHistory();
+}
+
+// Theme
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeToggle').textContent = isDark ? '🌙' : '☀️';
+}
+
+// Ripple
+document.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn || btn.classList.contains('hist-clear-btn') || btn.classList.contains('toggle-btn')) return;
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 560);
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key >= '0' && e.key <= '9') handleNum(e.key);
+  else if (e.key === '.') handleDot();
+  else if (e.key === '+') handleOp('+');
+  else if (e.key === '-') handleOp('-');
+  else if (e.key === '*') handleOp('*');
+  else if (e.key === '/') { e.preventDefault(); handleOp('/'); }
+  else if (e.key === 'Enter' || e.key === '=') handleEqual();
+  else if (e.key === 'Escape') handleAC();
+  else if (e.key === 'Backspace') { e.preventDefault(); handleDel(); }
+  else if (e.key === '%') handlePercent();
+});
+
+// Init
+renderHistory();
+updateDisplay();
+</script>
+</body>
+</html>
